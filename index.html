@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Portfolio pribadi modern dan profesional">
+  <title>Portfolio | Nurani Istiaen</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Dark Mode -->
+  <script>
+    tailwind.config = {
+      darkMode: 'class'
+    }
+  </script>
+
+  <!-- AOS -->
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+  <style>
+    html { scroll-behavior: smooth; }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .hero-bg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 20% 20%, rgba(59,130,246,.18), transparent 16%),
+                  radial-gradient(circle at 80% 30%, rgba(236,72,153,.14), transparent 14%),
+                  radial-gradient(circle at 50% 80%, rgba(168,85,247,.12), transparent 18%);
+    }
+
+    .hero-collage {
+      position: absolute;
+      top: 8%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(1000px, 96%);
+      aspect-ratio: 2 / 1;
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 0.4rem;
+      opacity: .65;
+      filter: brightness(.45) saturate(.8) contrast(.92);
+      mix-blend-mode: multiply;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .hero-collage .hero-card {
+      position: relative;
+      width: 100%;
+      min-height: 120px;
+      border-radius: 1rem;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.1);
+      background: rgba(255,255,255,.04);
+      box-shadow: 0 16px 38px rgba(15,23,42,.12);
+    }
+
+    .hero-collage .hero-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transform: translateZ(0);
+    }
+
+    .hero-copy {
+      position: relative;
+      z-index: 20;
+      padding: 0;
+      border-radius: 1.5rem;
+    }
+
+    .hero-copy h1 {
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1.02;
+      color: #0f172a;
+      text-shadow: 0 4px 28px rgba(15,23,42,.18), 0 0 1px rgba(255,255,255,.7);
+    }
+
+    .hero-copy p {
+      color: #334155;
+      font-weight: 600;
+      line-height: 1.7;
+      text-shadow: 0 2px 18px rgba(15,23,42,.12);
+    }
+
+    .dark .hero-copy h1 {
+      color: #f8fafc;
+    }
+
+    .dark .hero-copy p {
+      color: rgba(241,245,249,.92);
+    }
+
+    .hero-cta {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1.5rem;
+      padding: 0.85rem 1rem;
+      border-radius: 9999px;
+      background: rgba(255,255,255,.88);
+      border: 1px solid rgba(255,255,255,.75);
+      box-shadow: 0 24px 50px rgba(15,23,42,.12);
+      backdrop-filter: blur(12px);
+    }
+
+    .hero-cta a {
+      transition: transform .25s ease, box-shadow .25s ease, background-color .25s ease;
+    }
+
+    .hero-cta a:hover {
+      transform: translateY(-1px);
+    }
+
+    .dark .hero-cta {
+      background: rgba(15,23,42,.8);
+      border-color: rgba(255,255,255,.12);
+    }
+
+    .hero-collage .hero-card:nth-child(-n+6) {
+      animation: slide-right 20s ease-in-out infinite;
+    }
+
+    .hero-collage .hero-card:nth-child(n+7):nth-child(-n+12) {
+      animation: slide-left 20s ease-in-out infinite;
+    }
+
+    .hero-collage .hero-card:nth-child(n+13) {
+      animation: slide-right 20s ease-in-out infinite;
+    }
+
+    .expandable-card,
+    .exp-card {
+      position: relative;
+      overflow: hidden;
+      transition: transform .25s ease, box-shadow .25s ease;
+    }
+
+    .expandable-card:hover,
+    .exp-card:hover {
+      transform: translateY(-3px);
+    }
+
+    .expandable-card-body,
+    .exp-card-body {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transform: translateY(-10px);
+      transition: max-height .35s ease, opacity .35s ease, transform .35s ease;
+    }
+
+    .expandable-card.open .expandable-card-body,
+    .exp-card.open .exp-card-body {
+      max-height: 1000px;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .expandable-card-body img,
+    .exp-card-body img {
+      width: 100%;
+      height: 110px;
+      object-fit: cover;
+      border-radius: 1rem;
+    }
+
+    .expandable-card-toggle,
+    .exp-card-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: .8rem 1rem;
+      border-radius: 9999px;
+      border: 1px solid rgba(148,163,184,.35);
+      background: rgba(255,255,255,.88);
+      color: #0f172a;
+      font-weight: 600;
+      transition: transform .2s ease, background-color .2s ease, border-color .2s ease;
+    }
+
+    .expandable-card-toggle:hover,
+    .exp-card-toggle:hover {
+      transform: translateY(-1px);
+      border-color: rgba(148,163,184,.6);
+      background: rgba(255,255,255,.98);
+    }
+
+    .dark .expandable-card-toggle,
+    .dark .exp-card-toggle {
+      background: rgba(15,23,42,.85);
+      color: #f8fafc;
+      border-color: rgba(148,163,184,.2);
+    }
+
+    .project-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: .35rem .7rem;
+      border-radius: 9999px;
+      background: rgba(59,130,246,.12);
+      color: #1d4ed8;
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .02em;
+    }
+
+    .dark .project-tag {
+      background: rgba(96,165,250,.15);
+      color: #bfdbfe;
+    }
+
+    @keyframes slide-right {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(40px); }
+      50% { transform: translateX(80px); }
+      75% { transform: translateX(40px); }
+      100% { transform: translateX(0); }
+    }
+
+    @keyframes slide-left {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-40px); }
+      50% { transform: translateX(-80px); }
+      75% { transform: translateX(-40px); }
+      100% { transform: translateX(0); }
+    }
+  </style>
+</head>
+
+<body class="bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 dark:from-gray-900 dark:to-gray-800 text-gray-800 dark:text-white">
+
+<!-- NAVBAR -->
+<nav class="fixed w-full bg-white/80 dark:bg-gray-900/80 backdrop-blur z-50 shadow">
+  <div class="max-w-6xl mx-auto flex justify-between items-center p-4">
+    <h1 class="font-bold text-lg">MyPortfolio</h1>
+
+    <div class="hidden md:flex space-x-6">
+      <a href="#about" class="hover:text-blue-500">About</a>
+      <a href="#projects" class="hover:text-blue-500">Projects</a>
+      <a href="#experience" class="hover:text-blue-500">Experience</a>
+      <a href="#contact" class="hover:text-blue-500">Contact</a>
+    </div>
+
+    <button onclick="toggleDark()" class="border px-3 py-1 rounded-lg">🌙</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="relative min-h-screen flex flex-col-reverse md:flex-row items-center justify-center gap-10 px-6 overflow-hidden">
+  <div class="hero-bg"></div>
+  <div class="hero-collage" aria-hidden="true">
+    <div class="hero-card">
+      <img src="assets/img/deuis3.jpeg" alt="Gallery card">
+    </div>
+    <div class="hero-card">
+      <img src="assets/img/deuis4.jpeg" alt="Gallery card">
+    </div>
+    <div class="hero-card">
+      <img src="assets/img/deuis5.jpeg" alt="Gallery card">
+    </div>
+    <div class="hero-card">
+      <img src="assets/img/deuis6.jpeg" alt="Gallery card">
+    </div>
+    <div class="hero-card">
+      <img src="assets/img/deuis1.jpeg" alt="Gallery card">
+    </div>
+    <div class="hero-card">
+      <img src="assets/img/deuis2.jpeg" alt="Gallery card">
+    </div>
+    <div class="hero-card">
+      <img src="assets/img/deuis3.jpeg" alt="Gallery card">
+    </div>
+    <div class="hero-card">
+      <img src="assets/img/deuis4.jpeg" alt="Gallery card">
+    </div>
+    <div class="hero-card">
+      <img src="assets/img/deuis5.jpeg" alt="Gallery card">
+    </div>
+    <div class="hero-card">
+      <img src="assets/img/deuis6.jpeg" alt="Gallery card">
+    </div>
+    <div class="hero-card">
+      <img src="assets/img/deuis1.jpeg" alt="Gallery card">
+    </div>
+    <div class="hero-card">
+      <img src="assets/img/deuis2.jpeg" alt="Gallery card">
+    </div>
+    <div class="hero-card">
+      <img src="assets/img/deuis3.jpeg" alt="Gallery card">
+    </div>
+    <div class="hero-card">
+      <img src="assets/img/deuis4.jpeg" alt="Gallery card">
+    </div>
+    <div class="hero-card">
+      <img src="assets/img/deuis5.jpeg" alt="Gallery card">
+    </div>
+    <div class="hero-card">
+      <img src="assets/img/deuis6.jpeg" alt="Gallery card">
+    </div>
+    <div class="hero-card">
+      <img src="assets/img/deuis1.jpeg" alt="Gallery card">
+    </div>
+    <div class="hero-card">
+      <img src="assets/img/deuis2.jpeg" alt="Gallery card">
+    </div>
+  </div>
+
+  <!-- TEXT -->
+  <div data-aos="fade-right" class="hero-copy relative z-20 text-center md:text-left max-w-xl">
+    <h1 class="text-4xl md:text-5xl font-black tracking-tight mb-4">
+      Hai, Saya <span class="text-blue-600">Nurani Istiaen</span>
+    </h1>
+    <p class="mb-6 text-lg font-semibold">Frontend Developer | Machine Learning Enthusiast</p>
+
+    <div class="hero-cta">
+      <a href="#projects" class="bg-blue-600 text-white px-6 py-2 rounded-full shadow-lg hover:bg-blue-700">
+        Lihat Proyek
+      </a>
+      <a href="assets/cv.pdf" class="border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-white px-6 py-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800">
+        Unduh CV
+      </a>
+    </div>
+  </div>
+
+  <!-- IMAGE -->
+  <div data-aos="fade-left" class="relative z-10">
+    <img src="assets/img/deuis1.jpeg"
+         class="w-64 h-64 rounded-full shadow-xl border-4 border-white dark:border-gray-800 object-cover">
+  </div>
+
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="max-w-4xl mx-auto p-8" data-aos="fade-up">
+  <h2 class="text-2xl font-bold mb-4">About Me</h2>
+  <p class="text-justify text-base leading-8 md:text-lg text-slate-700 dark:text-slate-300">
+    Lulusan Teknik Informatika yang berorientasi pada detail dengan fondasi kuat dalam analisis data, machine learning, dan otomatisasi operasional. Berpengalaman dalam mengoptimalkan alur kerja data, mengeksekusi otomatisasi tugas teknis, serta mengelola administrasi digital. Memiliki keterampilan praktis dalam SQL, Python, dan Streamlit dari program intensif Dicoding dan CAKAP. Pribadi yang adaptif dan siap mengintegrasikan keahlian teknis untuk meningkatkan efisiensi operasional data perusahaan.
+  </p>
+</section>
+
+<!-- SKILLS -->
+<section class="bg-white dark:bg-gray-900 p-8" data-aos="fade-up">
+  <h2 class="text-2xl font-bold text-center mb-6">Skills & Tools</h2>
+
+  <div class="flex flex-wrap justify-center gap-4">
+    <span class="bg-blue-200 dark:bg-blue-700 px-4 py-2 rounded-full">HTML</span>
+    <span class="bg-purple-200 dark:bg-purple-700 px-4 py-2 rounded-full">Tailwind</span>
+    <span class="bg-pink-200 dark:bg-pink-700 px-4 py-2 rounded-full">JavaScript</span>
+    <span class="bg-yellow-200 dark:bg-yellow-600 px-4 py-2 rounded-full">Python</span>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects" class="p-8">
+  <h2 class="text-2xl font-bold text-center mb-8" data-aos="fade-up">Projects</h2>
+
+  <div class="grid md:grid-cols-3 gap-6">
+    <article id="fake-review-detail" class="expandable-card bg-white dark:bg-gray-900 rounded-xl shadow overflow-hidden" data-aos="zoom-in">
+      <img src="assets/projects/fake review/fake review.jpeg" class="w-full h-40 object-cover">
+      <div class="p-5">
+        <h3 class="font-bold text-lg">Fake Review Detection</h3>
+        <p class="text-sm mt-2 text-slate-600 dark:text-slate-300">Model ML untuk mendeteksi review palsu pada transaksi digital dan platform e-commerce.</p>
+        <div class="mt-3 flex flex-wrap gap-2">
+          <span class="project-tag">Python</span>
+          <span class="project-tag">NLP</span>
+          <span class="project-tag">ML</span>
+        </div>
+        <div class="mt-4 flex flex-wrap gap-3">
+          <a href="https://reviewdetection-mgw3jgugdvsxinhjgvynh9.streamlit.app/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center rounded-full bg-green-600 px-4 py-2 text-white font-semibold shadow-sm hover:bg-green-700">Buka app</a>
+          <a href="#" data-type="project" data-key="fake-review" class="expandable-card-toggle" aria-expanded="false">Lihat detail</a>
+        </div>
+      </div>
+      <div class="expandable-card-body px-5 pb-5">
+        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
+          <p class="mb-3">Artikel lengkap proyek ini membahas proses data, strategi model, dan hasil yang dicapai dalam konteks penyelesaian masalah nyata.</p>
+          <ul class="list-disc ml-5 space-y-2">
+            <li>Proses preprocessing dan pemilihan pendekatan yang paling relevan.</li>
+            <li>Evaluasi performa serta insight dari hasil eksperimen.</li>
+            <li>Potensi penerapan solusi di industri atau produk digital.</li>
+          </ul>
+          <a href="#" data-type="project" data-key="fake-review" class="inline-flex mt-4 items-center rounded-full bg-blue-600 px-4 py-2 text-white font-semibold shadow-sm hover:bg-blue-700">Buka halaman detail</a>
+        </div>
+      </div>
+    </article>
+
+    <article id="portfolio-detail" class="expandable-card bg-white dark:bg-gray-900 rounded-xl shadow overflow-hidden" data-aos="zoom-in">
+      <img src="assets/projects/web portofolio/web porto.jpeg" class="w-full h-40 object-cover">
+      <div class="p-5">
+        <h3 class="font-bold text-lg">Web Portfolio</h3>
+        <p class="text-sm mt-2 text-slate-600 dark:text-slate-300">Website personal modern, responsive, dan terstruktur untuk menampilkan profil, proyek, serta pengalaman.</p>
+        <div class="mt-3 flex flex-wrap gap-2">
+          <span class="project-tag">HTML</span>
+          <span class="project-tag">Tailwind</span>
+          <span class="project-tag">JS</span>
+        </div>
+        <a href="#" data-type="project" data-key="portfolio" class="expandable-card-toggle mt-4" aria-expanded="false">Lihat detail</a>
+      </div>
+      <div class="expandable-card-body px-5 pb-5">
+        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
+          <p class="mb-3">Portfolio ini dibuat untuk menampilkan karya, pengalaman, dan kemampuan dengan tampilan yang rapi, ringan, dan mudah diakses.</p>
+          <ul class="list-disc ml-5 space-y-2">
+            <li>Perancangan layout yang responsif untuk berbagai perangkat.</li>
+            <li>Penerapan interaksi yang menjaga pengalaman pengguna tetap lancar.</li>
+            <li>Pengorganisasian konten agar profil dan proyek lebih mudah dipahami.</li>
+          </ul>
+          <a href="#" data-type="project" data-key="portfolio" class="inline-flex mt-4 items-center rounded-full bg-blue-600 px-4 py-2 text-white font-semibold shadow-sm hover:bg-blue-700">Buka halaman detail</a>
+        </div>
+      </div>
+    </article>
+
+    <article id="dashboard-data-detail" class="expandable-card bg-white dark:bg-gray-900 rounded-xl shadow overflow-hidden" data-aos="zoom-in">
+      <img src="assets/projects/dashboard data/dashboard data.jpeg" class="w-full h-40 object-cover">
+      <div class="p-5">
+        <h3 class="font-bold text-lg">Dashboard Data</h3>
+        <p class="text-sm mt-2 text-slate-600 dark:text-slate-300">Visualisasi data interaktif untuk membantu memahami tren, pola, dan insight operasional.</p>
+        <div class="mt-3 flex flex-wrap gap-2">
+          <span class="project-tag">SQL</span>
+          <span class="project-tag">Python</span>
+          <span class="project-tag">Dashboard</span>
+        </div>
+        <div class="mt-4 flex flex-wrap gap-3">
+          <a href="https://drfksmgxyqgsqwhfei5gcq.streamlit.app/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center rounded-full bg-green-600 px-4 py-2 text-white font-semibold shadow-sm hover:bg-green-700">Buka app</a>
+          <a href="#" data-type="project" data-key="dashboard-data" class="expandable-card-toggle" aria-expanded="false">Lihat detail</a>
+        </div>
+      </div>
+      <div class="expandable-card-body px-5 pb-5">
+        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
+          <p class="mb-3">Dashboard ini fokus pada penyajian insight data secara ringkas agar tren dan pola operasional lebih mudah dipahami.</p>
+          <ul class="list-disc ml-5 space-y-2">
+            <li>Pengolahan data menjadi indikator utama yang mudah dibaca.</li>
+            <li>Visualisasi yang membantu pengambilan keputusan lebih cepat.</li>
+            <li>Struktur laporan yang lebih terarah untuk kebutuhan analisis.</li>
+          </ul>
+          <a href="#" data-type="project" data-key="dashboard-data" class="inline-flex mt-4 items-center rounded-full bg-blue-600 px-4 py-2 text-white font-semibold shadow-sm hover:bg-blue-700">Buka halaman detail</a>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience" class="bg-white dark:bg-gray-900 p-8" data-aos="fade-up">
+  <h2 class="text-2xl font-bold text-center mb-8">Experience</h2>
+
+  <div class="grid gap-6 md:grid-cols-2 max-w-6xl mx-auto">
+    <article id="yass-bimbel-detail" class="exp-card bg-slate-50 dark:bg-gray-800 rounded-3xl shadow p-6 transition" data-aos="zoom-in">
+      <div class="flex flex-col gap-4">
+        <div>
+          <p class="text-xs uppercase tracking-[0.3em] text-slate-500 dark:text-slate-400 mb-2">Administration & Tutor</p>
+          <h3 class="text-xl font-bold mb-2">Yayasan Anak Shaleh Shalehah (YASS BIMBEL)</h3>
+          <p class="text-sm text-slate-600 dark:text-slate-300">Dokumentasi operasional harian dengan fokus pada kelancaran kelas dan komunikasi.</p>
+        </div>
+        <div class="flex flex-wrap gap-3 items-center">
+          <span class="rounded-full bg-blue-100 text-blue-700 px-3 py-1 text-xs font-semibold dark:bg-blue-500/15 dark:text-blue-200">Data</span>
+          <span class="rounded-full bg-slate-100 text-slate-700 px-3 py-1 text-xs font-semibold dark:bg-slate-700/60 dark:text-slate-200">Tutor</span>
+        </div>
+        <div class="grid grid-cols-2 gap-3 mt-3">
+          <img src="assets/experience/tutor yass bimbel/WhatsApp Image 2026-10-05 at 11.53.47.jpeg" alt="Kegiatan tutor YASS" class="h-28 w-full rounded-xl object-cover">
+          <img src="assets/experience/tutor yass bimbel/WhatsApp Image 2026-10-05 at 11.53.47 (1).jpeg" alt="Kegiatan tutor YASS" class="h-28 w-full rounded-xl object-cover">
+          <img src="assets/experience/tutor yass bimbel/WhatsApp Image 2026-10-05 at 11.53.48.jpeg" alt="Kegiatan tutor YASS" class="h-28 w-full rounded-xl object-cover">
+          <img src="assets/experience/tutor yass bimbel/WhatsApp Image 2026-10-05 at 11.53.55.jpeg" alt="Kegiatan tutor YASS" class="h-28 w-full rounded-xl object-cover">
+        </div>
+        <a href="#" data-type="experience" data-key="yass-bimbel" class="exp-card-toggle" aria-expanded="false">Lihat detail</a>
+      </div>
+      <div class="exp-card-body mt-5 text-sm text-slate-700 dark:text-slate-300">
+        <p class="mb-3">Peran ini menuntut saya untuk menjaga kelancaran administrasi dan komunikasi supaya proses belajar tetap terorganisir dengan baik.</p>
+        <ul class="list-disc ml-5 space-y-2">
+          <li>Mengelola basis data siswa harian dan menyesuaikan jadwal kelas agar operasional berjalan lancar.</li>
+          <li>Mengoordinasikan komunikasi antara pengajar dan orang tua siswa dengan dokumentasi yang rapi.</li>
+          <li>Menyusun materi ajar yang lebih mudah dipahami untuk meningkatkan keterlibatan belajar.</li>
+        </ul>
+        <a href="#" data-type="experience" data-key="yass-bimbel" class="inline-flex mt-4 items-center rounded-full bg-blue-600 px-4 py-2 text-white font-semibold shadow-sm hover:bg-blue-700">Buka halaman detail</a>
+      </div>
+    </article>
+
+    <article id="event-admin-detail" class="exp-card bg-slate-50 dark:bg-gray-800 rounded-3xl shadow p-6 transition" data-aos="zoom-in">
+      <div class="flex flex-col gap-4">
+        <div>
+          <p class="text-xs uppercase tracking-[0.3em] text-slate-500 dark:text-slate-400 mb-2">Freelance</p>
+          <h3 class="text-xl font-bold mb-2">Administrator Event & Operasional Digital</h3>
+          <p class="text-sm text-slate-600 dark:text-slate-300">Dokumentasi acara, otomasi operasional, dan peran MC untuk workshop, seminar, dan webinar.</p>
+        </div>
+        <div class="flex flex-wrap gap-3 items-center">
+          <span class="rounded-full bg-blue-100 text-blue-700 px-3 py-1 text-xs font-semibold dark:bg-blue-500/15 dark:text-blue-200">Event</span>
+          <span class="rounded-full bg-slate-100 text-slate-700 px-3 py-1 text-xs font-semibold dark:bg-slate-700/60 dark:text-slate-200">MC</span>
+          <span class="rounded-full bg-slate-100 text-slate-700 px-3 py-1 text-xs font-semibold dark:bg-slate-700/60 dark:text-slate-200">Automasi</span>
+        </div>
+        <div class="grid grid-cols-2 gap-3 mt-3">
+          <img src="assets/experience/administrative support/freelance1.jpeg" alt="Dokumentasi administrative support 1" class="h-28 w-full rounded-xl object-cover">
+          <img src="assets/experience/administrative support/freelance2.jpeg" alt="Dokumentasi administrative support 2" class="h-28 w-full rounded-xl object-cover">
+        </div>
+        <a href="#" data-type="experience" data-key="event-admin" class="exp-card-toggle" aria-expanded="false">Lihat detail</a>
+      </div>
+      <div class="exp-card-body mt-5 text-sm text-slate-700 dark:text-slate-300">
+        <p class="mb-3">Saya terlibat dalam administrasi dan koordiansi acara agar proses kerja teknis dan komunikasi peserta tetap berjalan lancar.</p>
+        <ul class="list-disc ml-5 space-y-2">
+          <li>Mengelola administrasi event dan koordinasi teknis untuk acara daring maupun tatap muka.</li>
+          <li>Mengotomatisasi pembuatan dan distribusi 500+ sertifikat menggunakan Autocrat.</li>
+          <li>Bertindak sebagai MC untuk menjaga interaksi peserta dan alur acara tetap terjaga.</li>
+          <li>Menyusun materi promosi serta presentasi pendukung acara.</li>
+        </ul>
+        <a href="#" data-type="experience" data-key="event-admin" class="inline-flex mt-4 items-center rounded-full bg-blue-600 px-4 py-2 text-white font-semibold shadow-sm hover:bg-blue-700">Buka halaman detail</a>
+      </div>
+    </article>
+
+    <article id="pt-proxi-detail" class="exp-card bg-slate-50 dark:bg-gray-800 rounded-3xl shadow p-6 transition" data-aos="zoom-in">
+      <div class="flex flex-col gap-4">
+        <div>
+          <p class="text-xs uppercase tracking-[0.3em] text-slate-500 dark:text-slate-400 mb-2">Internship</p>
+          <h3 class="text-xl font-bold mb-2">PT Proxi Jaringan Nusantara</h3>
+          <p class="text-sm text-slate-600 dark:text-slate-300">Magang sebagai Network Engineer dengan fokus pada data pelanggan dan infrastruktur jaringan.</p>
+        </div>
+        <div class="flex flex-wrap gap-3 items-center">
+          <span class="rounded-full bg-blue-100 text-blue-700 px-3 py-1 text-xs font-semibold dark:bg-blue-500/15 dark:text-blue-200">Network</span>
+          <span class="rounded-full bg-slate-100 text-slate-700 px-3 py-1 text-xs font-semibold dark:bg-slate-700/60 dark:text-slate-200">Data</span>
+        </div>
+        <a href="#" data-type="experience" data-key="pt-proxi" class="exp-card-toggle" aria-expanded="false">Lihat detail</a>
+      </div>
+      <div class="exp-card-body mt-5 text-sm text-slate-700 dark:text-slate-300">
+        <p class="mb-3">Pelatihan ini memberi saya pemahaman nyata tentang operasi jaringan dan kebutuhan data pelanggan dalam layanan ISP.</p>
+        <ul class="list-disc ml-5 space-y-2">
+          <li>Mendukung proses pembayaran pelanggan serta menjaga akurasi data untuk layanan ISP.</li>
+          <li>Mempelajari arsitektur jaringan komputer dan infrastruktur telekomunikasi secara langsung.</li>
+          <li>Berkolaborasi dalam tim teknis untuk memahami alur kerja sistem jaringan dan penanganan kendala operasional.</li>
+        </ul>
+        <a href="#" data-type="experience" data-key="pt-proxi" class="inline-flex mt-4 items-center rounded-full bg-blue-600 px-4 py-2 text-white font-semibold shadow-sm hover:bg-blue-700">Buka halaman detail</a>
+      </div>
+    </article>
+
+    <article id="dinas-arsip-detail" class="exp-card bg-slate-50 dark:bg-gray-800 rounded-3xl shadow p-6 transition" data-aos="zoom-in">
+      <div class="flex flex-col gap-4">
+        <div>
+          <p class="text-xs uppercase tracking-[0.3em] text-slate-500 dark:text-slate-400 mb-2">Internship</p>
+          <h3 class="text-xl font-bold mb-2">Dinas Arsip dan Perpustakaan Kab. Sukabumi</h3>
+          <p class="text-sm text-slate-600 dark:text-slate-300">Magang sebagai Library Assistant dengan fokus pada pengarsipan digital dan layanan publik.</p>
+        </div>
+        <div class="flex flex-wrap gap-3 items-center">
+          <span class="rounded-full bg-blue-100 text-blue-700 px-3 py-1 text-xs font-semibold dark:bg-blue-500/15 dark:text-blue-200">Arsip</span>
+          <span class="rounded-full bg-slate-100 text-slate-700 px-3 py-1 text-xs font-semibold dark:bg-slate-700/60 dark:text-slate-200">Layanan</span>
+        </div>
+        <a href="#" data-type="experience" data-key="dinas-arsip" class="exp-card-toggle" aria-expanded="false">Lihat detail</a>
+      </div>
+      <div class="exp-card-body mt-5 text-sm text-slate-700 dark:text-slate-300">
+        <p class="mb-3">Pengalaman ini memperkuat saya dalam mengelola arsip, layanan publik, dan dokumentasi informasi secara sistematis.</p>
+        <ul class="list-disc ml-5 space-y-2">
+          <li>Mengoptimalkan pengarsipan data fisik dan digital agar akses informasi lebih cepat.</li>
+          <li>Mengelola administrasi pengunjung dan pemeliharaan katalog pustaka secara sistematis.</li>
+          <li>Mendukung pelaksanaan program komunitas perpustakaan dan dokumentasi acara publik.</li>
+        </ul>
+        <a href="#" data-type="experience" data-key="dinas-arsip" class="inline-flex mt-4 items-center rounded-full bg-blue-600 px-4 py-2 text-white font-semibold shadow-sm hover:bg-blue-700">Buka halaman detail</a>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="bg-slate-50 dark:bg-gray-900 p-8" data-aos="fade-up">
+  <h2 class="text-2xl font-bold text-center mb-8">Education & Certification</h2>
+
+  <div class="max-w-6xl mx-auto grid gap-6 md:grid-cols-2">
+    <article class="expandable-card rounded-3xl bg-white dark:bg-gray-800 p-6 shadow" data-aos="fade-up">
+      <h3 class="text-xl font-bold mb-4">Education</h3>
+      <ul class="list-disc ml-5 space-y-3 text-sm text-slate-700 dark:text-slate-300">
+        <li>Teknik Informatika — lulusan program sarjana dengan fokus analisis data dan pengembangan web.</li>
+        <li>Program intensif Dicoding Academy — Machine Learning, Data Analysis, dan Python.</li>
+        <li>Pelatihan CAKAP — Otomatisasi operasional dan dokumentasi digital.</li>
+      </ul>
+      <div class="grid grid-cols-2 gap-3 mt-4">
+        <img src="assets/education/education1.jpeg" alt="Foto pendidikan 1" class="h-28 w-full rounded-xl object-cover">
+        <img src="assets/education/education2.jpeg" alt="Foto pendidikan 2" class="h-28 w-full rounded-xl object-cover">
+      </div>
+      <button type="button" data-type="education" data-key="education" class="expandable-card-toggle mt-5" aria-expanded="false">Lihat detail</button>
+      <div class="expandable-card-body mt-5 text-sm text-slate-700 dark:text-slate-300">
+        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-900">
+          <p class="mb-3">Setiap pendidikan dan pelatihan ini membentuk pendekatan saya pada analisis data, pengelolaan informasi, dan solusi digital yang lebih efisien.</p>
+          <a href="#" data-type="education" data-key="education" class="inline-flex items-center rounded-full bg-blue-600 px-4 py-2 text-white font-semibold shadow-sm hover:bg-blue-700">Buka halaman detail</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="expandable-card rounded-3xl bg-white dark:bg-gray-800 p-6 shadow" data-aos="fade-up">
+      <h3 class="text-xl font-bold mb-4">Certifications</h3>
+      <ul class="list-disc ml-5 space-y-3 text-sm text-slate-700 dark:text-slate-300">
+        <li>Dicoding: Machine Learning dan Data Analysis.</li>
+        <li>Sertifikasi Python untuk Analisis Data dan Otomatisasi.</li>
+        <li>Pengembangan Web Frontend dan dokumentasi operasional digital.</li>
+      </ul>
+      <button type="button" data-type="certification" data-key="certification" class="expandable-card-toggle mt-5" aria-expanded="false">Lihat detail</button>
+      <div class="expandable-card-body mt-5 text-sm text-slate-700 dark:text-slate-300">
+        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-900">
+          <p class="mb-3">Dokumentasi dan sertifikasi yang saya miliki memperkuat kemampuan saya dalam mengolah data, membangun antarmuka yang rapi, serta mengelola proses kerja yang lebih terstruktur.</p>
+          <a href="#" data-type="certification" data-key="certification" class="inline-flex items-center rounded-full bg-blue-600 px-4 py-2 text-white font-semibold shadow-sm hover:bg-blue-700">Buka halaman detail</a>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="p-8 text-center" data-aos="fade-up">
+  <h2 class="text-2xl font-bold mb-6">Contact</h2>
+
+  <div class="flex flex-wrap items-center justify-center gap-5">
+    <a href="mailto:n.istiaen1705@gmail.com?subject=Halo%20Nurani" target="_blank" rel="noopener noreferrer"
+       class="flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-lg transition hover:-translate-y-1 hover:shadow-xl" aria-label="Email">
+      <img src="assets/img/logo email.png" alt="Email logo" class="h-12 w-12 object-contain rounded-full">
+    </a>
+
+    <a href="https://www.linkedin.com/in/nurani-istiaen-b126ba249/" target="_blank" rel="noopener noreferrer"
+       class="flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-lg transition hover:-translate-y-1 hover:shadow-xl" aria-label="LinkedIn">
+      <img src="assets/img/logo linkedin.png" alt="LinkedIn logo" class="h-12 w-12 object-contain rounded-full">
+    </a>
+
+    <a href="https://wa.me/6285798822543?text=Halo%20Nurani%2C%20saya%20tertarik%20dengan%20profil%20Anda." target="_blank" rel="noopener noreferrer"
+       class="flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-lg transition hover:-translate-y-1 hover:shadow-xl" aria-label="WhatsApp">
+      <img src="assets/img/logo wa.png" alt="WhatsApp logo" class="h-12 w-12 object-contain rounded-full">
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="text-center p-4 text-sm">
+  © 2026 Nurani Istiaen
+</footer>
+
+<!-- SCRIPT -->
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+
+<script>
+  const projectDetailData = {
+    'fake-review': {
+      title: 'Fake Review Detection',
+      badge: 'Machine Learning',
+      summary: 'Model ML untuk mendeteksi review palsu pada transaksi digital dan platform e-commerce.',
+      overview: 'Proyek ini berfokus pada analisis teks untuk membedakan review autentik dan review yang berpotensi tidak jujur. Tujuannya adalah meningkatkan kualitas data dan kepercayaan pengguna di platform digital.',
+      challenge: 'Review memiliki pola bahasa yang sering kali mirip dan sulit dibedakan tanpa pendekatan yang tepat. Diperlukan pengolahan data yang konsisten untuk menjaga akurasi model.',
+      solution: 'Saya melakukan preprocessing teks, pemilihan fitur yang relevan, dan mengevaluasi beberapa model klasifikasi agar hasil yang diperoleh lebih stabil dan dapat dipertanggungjawabkan.',
+      result: 'Model yang dihasilkan mampu memberi gambaran yang lebih jelas tentang review yang perlu diperiksa lebih lanjut dan membantu proses pengambilan keputusan secara data-driven.',
+      image: 'assets/projects/fake review/fake review.jpeg',
+      projectUrl: 'https://reviewdetection-mgw3jgugdvsxinhjgvynh9.streamlit.app/'
+    },
+    portfolio: {
+      title: 'Web Portfolio',
+      badge: 'Frontend',
+      summary: 'Website personal modern, responsive, dan terstruktur untuk menampilkan profil, proyek, serta pengalaman.',
+      overview: 'Portfolio ini dirancang agar audiens dapat memahami profil, kemampuan, dan pengalaman saya dengan lebih cepat melalui layout yang rapi serta navigasi yang jelas.',
+      challenge: 'Tantangan utama adalah menciptakan tampilan yang modern dan mudah dibaca tanpa mengorbankan responsivitas dan performa halaman.',
+      solution: 'Saya merancang layout yang bersih, menata hierarki visual, dan menambahkan interaksi yang mempertahankan pengalaman pengguna tetap nyaman di berbagai perangkat.',
+      result: 'Hasilnya adalah portofolio yang terlihat profesional, mudah dinavigasi, dan efektif dalam menampilkan identitas serta karya secara ringkas.',
+      image: 'assets/projects/web portofolio/web porto.jpeg'
+    },
+    'dashboard-data': {
+      title: 'Dashboard Data',
+      badge: 'Data Visualization',
+      summary: 'Visualisasi data interaktif untuk membantu memahami tren, pola, dan insight operasional.',
+      overview: 'Proyek ini menekankan pada penyajian data yang lebih ringkas sehingga insight operasional dapat dibaca dengan cepat dan dipahami tanpa kebingungan.',
+      challenge: 'Data yang sangat padat sering sulit dibaca bila tidak disajikan secara tepat. Diperlukan pendekatan visual yang menonjolkan indikator penting.',
+      solution: 'Saya merancang dashboard yang memadukan indikator utama, visualisasi yang jelas, dan struktur laporan yang mudah diikuti untuk kebutuhan analisis.',
+      result: 'Dashboard ini membantu proses pengambilan keputusan menjadi lebih cepat dengan memahami tren dan pola yang sedang terjadi.',
+      image: 'assets/projects/dashboard data/dashboard data.jpeg',
+      projectUrl: 'https://drfksmgxyqgsqwhfei5gcq.streamlit.app/'
+    }
+  };
+
+  const educationDetailData = {
+    education: {
+      title: 'Education',
+      badge: 'Academic & Learning Journey',
+      summary: 'Pendidikan formal dan pelatihan intensif yang membentuk kemampuan saya dalam data, teknologi, dan operasional digital.',
+      overview: 'Latar belakang pendidikan saya didukung oleh program akademik yang kuat serta berbagai pelatihan praktis yang memperluas kemampuan saya di bidang data, teknologi, dan penyelesaian masalah.',
+      challenge: 'Menggabungkan dasar teori dan kebutuhan praktik di dunia nyata membutuhkan pendekatan belajar yang terarah dan konsisten agar materi dapat diterapkan secara relevan.',
+      solution: 'Saya memadukan pembelajaran akademik dengan program pelatihan berbasis proyek, sehingga kemampuan saya berkembang dalam analisis data, otomasi, dan pengembangan solusi digital yang lebih terstruktur.',
+      result: 'Hasilnya, saya memiliki fondasi yang kuat dalam teknologi dan data sekaligus kemampuan untuk mengadaptasi berbagai kebutuhan proyek dan operasional modern.',
+      image: 'assets/education/education1.jpeg',
+      gallery: ['assets/education/education1.jpeg', 'assets/education/education2.jpeg']
+    }
+  };
+
+  const certificationDetailData = {
+    certification: {
+      title: 'Certifications',
+      badge: 'Professional Validation',
+      summary: 'Sertifikasi yang menegaskan kemampuan saya dalam data analysis, Python, dan pengembangan frontend.',
+      overview: 'Sertifikasi yang saya miliki merupakan bukti praktis atas kemampuan saya dalam memecahkan masalah nyata dengan alat dan pendekatan yang relevan di dunia kerja.',
+      challenge: 'Dalam bidang teknologi, kemampuan yang sudah dipelajari perlu dibuktikan melalui kompetensi yang jelas agar lebih mudah diterima dan diaplikasikan dalam proyek nyata.',
+      solution: 'Saya mengikuti pelatihan dan sertifikasi bertingkat yang fokus pada analisis data, otomatisasi, serta pengembangan antarmuka digital untuk memastikan keterampilan saya selaras dengan kebutuhan industri.',
+      result: 'Dengan sertifikasi ini, saya lebih siap dalam menghadapi tugas yang membutuhkan kombinasi pemahaman teknis, logika data, dan penyajian informasi yang efektif.',
+      image: 'assets/education/education2.jpeg'
+    }
+  };
+
+  const experienceDetailData = {
+    'yass-bimbel': {
+      title: 'Yayasan Anak Shaleh Shalehah (YASS BIMBEL)',
+      badge: 'Administration & Tutor',
+      summary: 'Dokumentasi operasional harian dengan fokus pada kelancaran kelas dan komunikasi.',
+      overview: 'Pada posisi ini, saya berperan dalam menjaga kelancaran administrasi, dokumentasi siswa, serta komunikasi agar pembelajaran dapat berjalan lebih terstruktur dan fokus.',
+      challenge: 'Pembelajaran memerlukan koordinasi yang konsisten. Jika administrasi dan jadwal tidak terdokumentasi dengan jelas, maka proses belajar bisa terganggu.',
+      solution: 'Saya mengatur data siswa dan jadwal kelas dengan lebih rapi serta menjaga komunikasi yang efektif antara pengajar, siswa, dan orang tua agar semua proses tetap terkoordinasi.',
+      result: 'Hasilnya adalah operasional kelas yang lebih lancar dan lingkungan belajar yang lebih terstruktur dan nyaman.',
+      image: 'assets/experience/tutor yass bimbel/WhatsApp Image 2026-10-05 at 11.53.47.jpeg',
+      gallery: [
+        'assets/experience/tutor yass bimbel/WhatsApp Image 2026-10-05 at 11.53.47.jpeg',
+        'assets/experience/tutor yass bimbel/WhatsApp Image 2026-10-05 at 11.53.47 (1).jpeg',
+        'assets/experience/tutor yass bimbel/WhatsApp Image 2026-10-05 at 11.53.48.jpeg',
+        'assets/experience/tutor yass bimbel/WhatsApp Image 2026-10-05 at 11.53.55.jpeg'
+      ]
+    },
+    'event-admin': {
+      title: 'Administrator Event & Operasional Digital',
+      badge: 'Freelance',
+      summary: 'Dokumentasi acara, otomasi operasional, dan peran MC untuk workshop, seminar, dan webinar.',
+      overview: 'Saya terlibat dalam berbagai sisi operasional acara, mulai dari administrasi, dokumentasi, hingga koordinasi peserta agar event dapat berlangsung sesuai rencana.',
+      challenge: 'Event dengan banyak peserta memerlukan koordinasi cepat dan dokumen yang teratur agar tidak terjadi kebingungan di lapangan.',
+      solution: 'Saya mengotomatisasi pembuatan sertifikat dan mengorganisir dokumentasi acara agar pekerjaan administratif bisa dilakukan lebih cepat namun tetap akurat dan konsisten.',
+      result: 'Acara dapat dikelola dengan lebih efisien dan peserta merasakan pengalaman yang lebih terstruktur dan profesional.',
+      image: 'assets/experience/administrative support/freelance1.jpeg',
+      gallery: [
+        'assets/experience/administrative support/freelance1.jpeg',
+        'assets/experience/administrative support/freelance2.jpeg'
+      ]
+    },
+    'pt-proxi': {
+      title: 'PT Proxi Jaringan Nusantara',
+      badge: 'Internship',
+      summary: 'Magang sebagai Network Engineer dengan fokus pada data pelanggan dan infrastruktur jaringan.',
+      overview: 'Pengalaman ini memberi saya pemahaman langsung tentang operasional jaringan serta kebutuhan data pelanggan di layanan ISP.',
+      challenge: 'Jaringan dan data pelanggan memerlukan koordinasi yang tepat agar layanan tetap berjalan lancar dan akurat.',
+      solution: 'Saya belajar langsung mengenai arsitektur jaringan dan proses operasional, sambil mendukung akurasi data pelanggan serta memahami kebutuhan tim teknis.',
+      result: 'Pengalaman ini memperkuat fondasi teknis saya dan memberi wawasan nyata tentang cara kerja jaringan di lingkungan industri.'
+    },
+    'dinas-arsip': {
+      title: 'Dinas Arsip dan Perpustakaan Kab. Sukabumi',
+      badge: 'Internship',
+      summary: 'Magang sebagai Library Assistant dengan fokus pada pengarsipan digital dan layanan publik.',
+      overview: 'Saya belajar tentang pengelolaan arsip, akses informasi, dan pelayanan publik agar data serta dokumen tetap terorganisir dengan baik.',
+      challenge: 'Dokumentasi dan akses informasi perlu dikelola dengan sistem yang rapi agar mudah ditemukan dan tetap konsisten.',
+      solution: 'Saya membantu mengoptimalkan pengarsipan hidup serta menjaga katalog dan administrasi layanan agar lebih rapi dan mudah diakses.',
+      result: 'Pengalaman ini memperkuat kemampuan saya dalam mengelola data, informasi, dan pelayanan publik dengan pendekatan yang sistematis.'
+    }
+  };
+
+  function openDetailPage(type, key) {
+    let store = null;
+
+    if (type === 'project') {
+      store = projectDetailData;
+    } else if (type === 'experience') {
+      store = experienceDetailData;
+    } else if (type === 'education') {
+      store = educationDetailData;
+    } else if (type === 'certification') {
+      store = certificationDetailData;
+    }
+
+    const item = store ? store[key] : null;
+    const page = window.open('', '_blank');
+
+    if (!page || !item) return;
+
+    const gallery = item.gallery || (item.image ? [item.image] : []);
+    const projectLink = item.projectUrl ? `<a href="${item.projectUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center rounded-full bg-green-600 px-5 py-3 text-white font-semibold shadow hover:bg-green-700">Buka app</a>` : '';
+
+    page.document.write(`<!DOCTYPE html>
+      <html lang="id">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>${item.title}</title>
+        <script src="https://cdn.tailwindcss.com"><\/script>
+        <script>tailwind.config = { darkMode: 'class' }<\/script>
+        <style>
+          html { scroll-behavior: smooth; }
+          body { min-height: 100vh; background: linear-gradient(135deg, #dbeafe 0%, #f3e8ff 40%, #fce7f3 100%); }
+          .dark body { background: linear-gradient(135deg, #111827 0%, #1f2937 45%, #0f172a 100%); }
+        </style>
+      </head>
+      <body class="text-slate-800 dark:text-slate-100">
+        <nav class="fixed w-full bg-white/80 dark:bg-gray-900/80 backdrop-blur z-50 shadow">
+          <div class="max-w-6xl mx-auto flex items-center justify-between p-4">
+            <a href="index.html" class="font-bold text-lg text-blue-600 dark:text-blue-400">← Kembali</a>
+            <button onclick="document.documentElement.classList.toggle('dark')" class="border px-3 py-1 rounded-lg bg-white dark:bg-slate-800">🌙</button>
+          </div>
+        </nav>
+        <main class="max-w-5xl mx-auto px-6 py-28">
+          <article class="rounded-[2rem] bg-white/90 dark:bg-slate-900/90 shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div class="p-6 md:p-10">
+              <div class="flex flex-wrap items-center gap-3 mb-4">
+                <span class="rounded-full bg-blue-100 text-blue-700 px-3 py-1 text-xs font-semibold dark:bg-blue-500/15 dark:text-blue-200">${item.badge}</span>
+                <span class="text-sm text-slate-500 dark:text-slate-400">${type === 'project' ? 'Project' : type === 'experience' ? 'Experience' : type === 'education' ? 'Education' : 'Certification'} detail</span>
+              </div>
+              ${item.image ? `<img src="${item.image}" alt="${item.title}" class="mb-8 h-64 w-full rounded-3xl object-cover shadow-md">` : ''}
+              <h1 class="text-3xl md:text-5xl font-black tracking-tight mb-3">${item.title}</h1>
+              <p class="text-lg text-slate-600 dark:text-slate-300 mb-8">${item.summary}</p>
+              ${gallery.length > 1 ? `<div class="mb-8 grid gap-4 sm:grid-cols-2">${gallery.map(src => `<img src="${src}" alt="${item.title}" class="h-48 w-full rounded-2xl object-cover shadow-sm">`).join('')}</div>` : ''}
+              <div class="grid gap-6 md:grid-cols-2 mb-8">
+                <div class="rounded-2xl bg-slate-50 dark:bg-slate-800 p-5 shadow-sm">
+                  <h2 class="font-bold text-xl mb-3">Overview</h2>
+                  <p class="text-slate-700 dark:text-slate-300 leading-7">${item.overview}</p>
+                </div>
+                <div class="rounded-2xl bg-slate-50 dark:bg-slate-800 p-5 shadow-sm">
+                  <h2 class="font-bold text-xl mb-3">Challenge</h2>
+                  <p class="text-slate-700 dark:text-slate-300 leading-7">${item.challenge}</p>
+                </div>
+              </div>
+              <div class="rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 p-[1px] mb-8">
+                <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 md:p-6">
+                  <h2 class="font-bold text-xl mb-3">Solution</h2>
+                  <p class="text-slate-700 dark:text-slate-300 leading-7">${item.solution}</p>
+                </div>
+              </div>
+              <div class="mt-8 rounded-2xl border border-slate-200 dark:border-slate-700 p-5">
+                <h2 class="font-bold text-xl mb-4">Result</h2>
+                <p class="text-slate-700 dark:text-slate-300 leading-7">${item.result}</p>
+              </div>
+              <div class="mt-8 flex flex-wrap gap-4">
+                ${projectLink}
+                <a href="index.html" class="inline-flex items-center rounded-full bg-blue-600 px-5 py-3 text-white font-semibold shadow hover:bg-blue-700">Kembali ke halaman utama</a>
+              </div>
+            </div>
+          </article>
+        </main>
+      </body>
+      </html>`);
+    page.document.close();
+  }
+
+  AOS.init({ duration: 1000, once: true });
+
+  document.querySelectorAll('.expandable-card-toggle, .exp-card-toggle, a[data-type][data-key]').forEach(button => {
+    button.addEventListener('click', (event) => {
+      const type = button.dataset.type;
+      const key = button.dataset.key;
+
+      if (button.tagName === 'A' && type && key) {
+        event.preventDefault();
+        openDetailPage(type, key);
+        return;
+      }
+
+      if (type && key) {
+        event.preventDefault();
+        openDetailPage(type, key);
+      }
+
+      const card = button.closest('.expandable-card, .exp-card');
+      if (!card) return;
+
+      const expanded = card.classList.toggle('open');
+      button.setAttribute('aria-expanded', expanded);
+      button.textContent = expanded ? 'Sembunyikan detail' : 'Lihat detail';
+    });
+  });
+
+  function toggleDark() {
+    document.documentElement.classList.toggle('dark');
+  }
+</script>
+
+</body>
+</html>
